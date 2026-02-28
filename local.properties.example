@@ -1,0 +1,20 @@
+# Secrets & Build Configurations
+# Copy this file to 'local.properties' and fill in your actual values.
+# DO NOT commit 'local.properties' to version control.
+
+# Base URL for API calls
+BASE_URL=https://api.exmaple.com
+
+# Your private API Key
+API_KEY=your_actual_secret_api_key_here
+
+# XOR Key used for basic obfuscation (Integer)
+XOR_KEY=42
+
+# Application Metadata
+APP_ID=com.example.app
+APP_VERSION_NAME=1.0.0
+APP_VERSION_CODE=1
+
+# iOS Specific
+TEAM_ID=XXXXXXXXXX

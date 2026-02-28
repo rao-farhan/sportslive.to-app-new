@@ -6,6 +6,9 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+// Access the reusable function from the root project
+val getRequiredProperty: (String) -> String by rootProject.extra
+
 kotlin {
     target {
         compilerOptions {
@@ -26,11 +29,11 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "to.sports.live"
+        applicationId = getRequiredProperty("APP_ID")
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = getRequiredProperty("APP_VERSION_CODE").toInt()
+        versionName = getRequiredProperty("APP_VERSION_NAME")
     }
     packaging {
         resources {
@@ -39,7 +42,11 @@ android {
     }
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
