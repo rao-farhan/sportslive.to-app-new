@@ -6,13 +6,10 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
-kotlin {
-    dependencies {
-        implementation(projects.shared)
-
-        implementation(compose.desktop.currentOs)
-        implementation(libs.kotlinx.coroutinesSwing)
-    }
+dependencies {
+    implementation(projects.shared)
+    implementation(compose.desktop.currentOs)
+    implementation(libs.kotlinx.coroutines.swing)
 }
 
 compose.desktop {
