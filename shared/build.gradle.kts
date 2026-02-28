@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -9,11 +10,51 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.buildkonfig)
+}
+
+// Access the reusable function from the root project
+val getRequiredProperty: (String) -> String by rootProject.extra
+val getPropertyOrDefault: (String, String) -> String by rootProject.extra
+
+val baseUrl = getRequiredProperty("BASE_URL")
+val apiKey = getRequiredProperty("API_KEY")
+val xorKey = getRequiredProperty("XOR_KEY").toInt()
+val appName = getRequiredProperty("APP_NAME")
+val webAppTitle = getPropertyOrDefault("WEB_APP_TITLE", appName)
+val desktopAppTitle = getPropertyOrDefault("DESKTOP_APP_TITLE", appName)
+val appVersionName = getRequiredProperty("APP_VERSION_NAME")
+val appVersionCode = getRequiredProperty("APP_VERSION_CODE")
+val appId = getRequiredProperty("APP_ID")
+val buildKonfigPackage = "com.example.app"
+val sharedNamespace = "$appId.shared"
+val databasePackage = "$appId.db"
+
+fun encode(value: String, key: Int): String {
+    return value.map { (it.code xor key).toChar() }.joinToString("")
+}
+
+val encodedApiKey = encode(apiKey, xorKey)
+
+buildkonfig {
+    packageName = buildKonfigPackage
+    exposeObjectWithName = "PublicBuildKonfig"
+    defaultConfigs {
+        buildConfigField(FieldSpec.Type.STRING, "BASE_URL", baseUrl)
+        buildConfigField(FieldSpec.Type.STRING, "ENCODED_API_KEY", encodedApiKey)
+        buildConfigField(FieldSpec.Type.INT, "XOR_KEY", xorKey.toString())
+        buildConfigField(FieldSpec.Type.STRING, "APP_NAME", appName)
+        buildConfigField(FieldSpec.Type.STRING, "WEB_APP_TITLE", webAppTitle)
+        buildConfigField(FieldSpec.Type.STRING, "DESKTOP_APP_TITLE", desktopAppTitle)
+        buildConfigField(FieldSpec.Type.STRING, "APP_ID", appId)
+        buildConfigField(FieldSpec.Type.STRING, "APP_VERSION_NAME", appVersionName)
+        buildConfigField(FieldSpec.Type.STRING, "APP_VERSION_CODE", appVersionCode)
+    }
 }
 
 kotlin {
     androidLibrary {
-        namespace = "to.sports.live.shared"
+        namespace = sharedNamespace
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
 
@@ -134,7 +175,7 @@ kotlin {
 sqldelight {
     databases {
         create("AppDatabase") {
-            packageName.set("to.sports.live.db")
+            packageName.set(databasePackage)
         }
     }
 }

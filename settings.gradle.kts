@@ -1,4 +1,18 @@
-rootProject.name = "SportsLive"
+import java.util.Properties
+
+fun resolveProjectName(defaultName: String): String {
+    val localPropertiesFile = file("local.properties")
+    if (!localPropertiesFile.exists()) {
+        return defaultName
+    }
+
+    val properties = Properties().apply {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+    return properties.getProperty("PROJECT_NAME")?.takeIf { it.isNotBlank() } ?: defaultName
+}
+
+rootProject.name = resolveProjectName("ExampleApp")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

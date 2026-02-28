@@ -6,6 +6,10 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+val getRequiredProperty: (String) -> String by rootProject.extra
+val appId = getRequiredProperty("APP_ID")
+val appVersionName = getRequiredProperty("APP_VERSION_NAME")
+
 dependencies {
     implementation(projects.shared)
     implementation(compose.desktop.currentOs)
@@ -14,12 +18,12 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "to.sports.live.MainKt"
+        mainClass = "com.example.app.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "to.sports.live"
-            packageVersion = "1.0.0"
+            packageName = appId
+            packageVersion = appVersionName
         }
     }
 }
