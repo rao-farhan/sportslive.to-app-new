@@ -82,31 +82,46 @@ kotlin {
             // Coil
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+
+            // Napier
+            implementation(libs.napier)
+            // Decompose
+            implementation(libs.decompose)
+            implementation(libs.decompose.extensions.compose)
+            // MVIKotlin
+            implementation(libs.mvikotlin)
+            implementation(libs.mvikotlin.main)
+            implementation(libs.mvikotlin.extensions.coroutines)
         }
 
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
             implementation(libs.koin.android)
+            implementation(libs.store5)
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
+            implementation(libs.store5)
         }
 
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
+            implementation(libs.store5)
         }
 
         jsMain.dependencies {
             implementation(libs.ktor.client.js)
+            implementation(libs.store5)
         }
 
         @OptIn(ExperimentalWasmDsl::class)
         val wasmJsMain by getting {
             dependencies {
                 implementation(libs.ktor.client.cio)
+                // Store5 currently doesn't support wasmJs
             }
         }
 
